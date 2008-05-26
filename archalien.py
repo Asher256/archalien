@@ -21,9 +21,6 @@
 #
 """Convert a Debian package to an Arch Linux package."""
 
-from __future__ import print_function
-from __future__ import division
-from __future__ import absolute_import
 import sys
 import os
 from shutil import rmtree
