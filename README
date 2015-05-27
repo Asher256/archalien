@@ -1,6 +1,17 @@
 Author   : Asher256
 Web site : https://github.com/Asher256/archalien
 
-ArchAlien is a tool you can use to onvert an Arch Linux package
-to a Debian package (and vice versa).
+ArchAlien is a tool you can use to convert an Arch Linux package
+to a Debian package .deb (and vice versa).
+
+Example:
+--------
+$ ./archalien.py apt-file_2.5.4ubuntu1_all.deb
+Conversion of apt-file_2.5.4ubuntu1_all.deb...
+
+done.
+
+The Arch Linux package:
+/home/gameloft/.github/archalien/apt-file-2.5.4ubuntu1.pkg.tar.gz
+
 

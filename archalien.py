@@ -289,7 +289,7 @@ def convert(input_pkg, output_pkg=''):
 
         print "done."
         print
-        print 'The Arch Linux package is in :\n%s' % output_pkg
+        print 'The Arch Linux package:\n%s' % output_pkg
     finally:
         rmtree(input_tmpd, True)
         rmtree(output_tmpd, True)
