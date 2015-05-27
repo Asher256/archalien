@@ -21,12 +21,13 @@
 
 """
 
-# global imports
 import sys
 import os
 from shutil import rmtree
 from tempfile import mkdtemp
 from getopt import gnu_getopt, GetoptError
+
+# Arguments and init {{{
 
 
 def command_required(*cmd_list):
@@ -136,6 +137,8 @@ def handle_arguments():
 
     return result
 
+# END: arguments and init }}}
+
 
 def read_debcontrol(path):
     """Read some informations since debian/control.
@@ -242,9 +245,21 @@ def convert(input_pkg, output_pkg=''):
         # Extraction of the deb archive
         os.system('ar x \'%s\'' % input_pkg)
 
-        # Extraction of control.tar.gz and data.tar.gz
+        if os.path.exists('data.tar.gz'):
+            data_path = 'data.tar.gz'
+        else:
+            for found_data_path in os.listdir('.'):
+                if found_data_path.find('data.tar') == 0:
+                    data_path = found_data_path
+                    break
+
+            if data_path == '':
+                print "The data archive wasn't found inside %s" % input_pkg
+                sys.exit(1)
+
+        # Extraction of control.tar.gz and data.tar.x
         os.system('tar xf \'%s\' -C \'%s\'' %
-                  (os.path.join(input_tmpd, 'data.tar.gz'),
+                  (os.path.join(input_tmpd, data_path),
                    output_tmpd))
         os.system('tar xf \'%s\'' %
                   (os.path.join(input_tmpd, 'control.tar.gz')))
