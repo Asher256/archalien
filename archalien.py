@@ -165,9 +165,17 @@ def read_debcontrol(path):
             result['name'] = value
         if variable == 'installed-size':
             result['size'] = value
-        elif variable in ['maintainer', 'version', 'architecture',
-                          'description']:
+        elif variable in ['maintainer', 'version', 'description']:
             result[variable] = value
+        elif variable == 'architecture':
+            if value == 'amd64':
+                result['architecture'] = 'x86_64'
+            elif value == 'i386':
+                result['architecture'] = 'i686' # on Arch Linux, i686 only
+            elif value == 'i686':
+                result['architecture'] = 'i686'
+            else:
+                result['architecture'] = 'all'
 
     filedesc.close()
 
