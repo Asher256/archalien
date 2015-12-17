@@ -17,10 +17,11 @@
 # along with This program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #
-"""Convert a Debian package to an Arch Linux package.
+"""Convert a Debian package to an Arch Linux package."""
 
-"""
-
+from __future__ import print_function
+from __future__ import division
+from __future__ import absolute_import
 import sys
 import os
 from shutil import rmtree
@@ -31,16 +32,12 @@ from getopt import gnu_getopt, GetoptError
 
 
 def command_required(*cmd_list):
-    """This function tests if all programs in the
-    arguments are available in the enrironment
-    variable 'PATH'.
-
-    """
+    """Check if the commands exist."""
     path = os.getenv('PATH')
     if path is not None:
         path_list = path.split(os.pathsep)
     else:
-        print "The environment variable PATH is not defined."
+        print("The environment variable PATH is not defined.")
         sys.exit(1)
 
     for command in cmd_list:
@@ -53,7 +50,7 @@ def command_required(*cmd_list):
                 break
 
         if error:
-            print 'The command \'%s\' is not found.' % command
+            print('The command \'%s\' is not found.' % command)
             sys.exit(1)
 
 
@@ -64,16 +61,16 @@ def fix_input_pkg(input_pkg):
 
     """
     if not os.path.isfile(input_pkg):
-        print '\'%s\' doesn\'t exist.' % input_pkg
+        print('\'%s\' doesn\'t exist.' % input_pkg)
         sys.exit(1)
 
     if not os.access(input_pkg, os.R_OK):
-        print '\'%s\' is not accessible in reading.' % input_pkg
+        print('\'%s\' is not accessible in reading.' % input_pkg)
 
     (input_name, input_ext) = os.path.splitext(input_pkg)
 
     if input_ext != '.deb':
-        print 'The extension of \'%s\' must be *.deb.' % input_pkg
+        print('The extension of \'%s\' must be *.deb.' % input_pkg)
         sys.exit(1)
 
     # Convert to the absolute path
@@ -83,26 +80,22 @@ def fix_input_pkg(input_pkg):
 
 
 def usage():
-    """This function is called when the user uses --help.
-
-    """
-    print 'Convert a Debian or an RPM Package into an Arch Linux package' + \
-          ' (and vice-versa).'
-    print
-    print 'Usage: %s [OPTIONS] debian_package.deb [arch_package.pkg.tar.gz]' \
-          % os.path.basename(sys.argv[0])
-    print
-    print "OPTIONS :"
-    print "          -h, --help            Show this help"
-    print
+    """Called when the user uses --help."""
+    print('Convert a Debian or an RPM Package into an Arch Linux package'
+          ' (and vice-versa).')
+    print()
+    print('Usage: %s [OPTIONS] debian_package.deb [arch_package.pkg.tar.gz]'
+          % os.path.basename(sys.argv[0]))
+    print()
+    print("OPTIONS :")
+    print("          -h, --help            Show this help")
+    print()
     sys.exit(0)
 
 
 def more_informations():
-    """Suggest to the user to read the help.
-
-    """
-    print "--help for more informations."
+    """Suggest to the user to read the help."""
+    print("--help for more informations.")
     sys.exit(1)
 
 
@@ -119,11 +112,11 @@ def handle_arguments():
         args = sys.argv[1:]
         optlist = gnu_getopt(args, 'h', ['help'])
     except GetoptError:
-        print 'Error when parsing arguments.'
+        print('Error when parsing arguments.')
         more_informations()
 
     if len(sys.argv) < 2:
-        print 'No input file.'
+        print('No input file.')
         more_informations()
 
     for option, value in optlist[0]:
@@ -141,16 +134,14 @@ def handle_arguments():
 
 
 def read_debcontrol(path):
-    """Read some informations since debian/control.
-
-    """
+    """Read some informations since debian/control."""
     result = {'name': '', 'maintainer': '', 'version': '',
               'description': '', 'size': '', 'architecture': ''}
 
     try:
         filedesc = open(path, 'r')
     except IOError:
-        print 'Cannot read debian package informations from \'%s\'.' % path
+        print('Cannot read debian package informations from \'%s\'.' % path)
         sys.exit(1)
 
     for line in filedesc.readlines():
@@ -171,7 +162,7 @@ def read_debcontrol(path):
             if value == 'amd64':
                 result['architecture'] = 'x86_64'
             elif value == 'i386':
-                result['architecture'] = 'i686' # on Arch Linux, i686 only
+                result['architecture'] = 'i686'  # on Arch Linux, i686 only
             elif value == 'i686':
                 result['architecture'] = 'i686'
             else:
@@ -179,11 +170,11 @@ def read_debcontrol(path):
 
     filedesc.close()
 
-    for key, value in result.items():
+    for key, value in list(result.items()):
         if value == '' and key not in ['size']:
-            print 'The debian package doesn\'t ' \
-                  'contain all needed informations.\n' \
-                  'The variable \'%s\' is empty.' % key
+            print('The debian package doesn\'t '
+                  'contain all needed informations.\n'
+                  'The variable \'%s\' is empty.' % key)
             sys.exit(1)
 
     return result
@@ -199,7 +190,7 @@ def write_archcontrol(path, pkginfo):
     try:
         filedesc = open(path, 'w')
     except IOError:
-        print '\'%s\' is not accessible in writing.' % path
+        print('\'%s\' is not accessible in writing.' % path)
         sys.exit(1)
 
     filedesc.write('# Generated by Alien Arch\n')
@@ -219,8 +210,7 @@ def write_archcontrol(path, pkginfo):
 
 
 def convert(input_pkg, output_pkg=''):
-    """Convert the input package (Debian format) to
-    the output package (an Arch Linux package).
+    """Convert a Debian package to an Arch Linux package.
 
     input_pkg must contain the input package, with
     *.deb extension.
@@ -236,15 +226,15 @@ def convert(input_pkg, output_pkg=''):
     (input_tmpd, output_tmpd) = (mkdtemp(), mkdtemp())
 
     input_pkg = fix_input_pkg(input_pkg)
-    print 'Conversion of %s...' % os.path.basename(input_pkg)
-    print
+    print('Conversion of %s...' % os.path.basename(input_pkg))
+    print()
 
     def chdir(directory):
-        """Change directory"""
+        """Change the directory."""
         try:
             os.chdir(directory)
         except OSError:
-            print 'Cannot go into %s.' % directory
+            print('Cannot chdir to %s.' % directory)
             sys.exit(1)
 
     try:
@@ -262,7 +252,7 @@ def convert(input_pkg, output_pkg=''):
                     break
 
             if data_path == '':
-                print "The data archive wasn't found inside %s" % input_pkg
+                print("The data archive wasn't found inside %s" % input_pkg)
                 sys.exit(1)
 
         # Extraction of control.tar.gz and data.tar.x
@@ -287,9 +277,9 @@ def convert(input_pkg, output_pkg=''):
         write_archcontrol('.PKGINFO', deb_info)
         os.system('tar zcf \'%s\' * .PKGINFO .FILELIST' % output_pkg)
 
-        print "done."
-        print
-        print 'The Arch Linux package:\n%s' % output_pkg
+        print("done.")
+        print()
+        print('The Arch Linux package:\n%s' % output_pkg)
     finally:
         rmtree(input_tmpd, True)
         rmtree(output_tmpd, True)
@@ -301,6 +291,6 @@ if __name__ == '__main__':
         convert(DATA['input_pkg'],
                 DATA['output_pkg'])
     except KeyboardInterrupt:
-        print "Interrupted."
+        print("Interrupted.")
 
 # vim:ai:et:sw=4:ts=4:sts=4:tw=78:fenc=utf-8
