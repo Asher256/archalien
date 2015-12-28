@@ -92,7 +92,7 @@ def usage():
 
 
 def more_informations():
-    """--helo for more informations."""
+    """Asks the user to use --help."""
     print("--help for more informations.")
     sys.exit(1)
 
