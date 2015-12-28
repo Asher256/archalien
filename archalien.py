@@ -28,8 +28,6 @@ from shutil import rmtree
 from tempfile import mkdtemp
 from getopt import gnu_getopt, GetoptError
 
-# Arguments and init {{{
-
 
 def command_required(*cmd_list):
     """Check if the commands exist."""
@@ -67,7 +65,7 @@ def fix_input_pkg(input_pkg):
     if not os.access(input_pkg, os.R_OK):
         print('\'%s\' is not accessible in reading.' % input_pkg)
 
-    (input_name, input_ext) = os.path.splitext(input_pkg)
+    (_, input_ext) = os.path.splitext(input_pkg)
 
     if input_ext != '.deb':
         print('The extension of \'%s\' must be *.deb.' % input_pkg)
@@ -94,7 +92,7 @@ def usage():
 
 
 def more_informations():
-    """Suggest to the user to read the help."""
+    """--helo for more informations."""
     print("--help for more informations.")
     sys.exit(1)
 
@@ -102,7 +100,7 @@ def more_informations():
 def handle_arguments():
     """Handle all options in the arguments.
 
-    This function returns a dictionary contain
+    This function returns a dictionary that contain
     'input_pkg' and 'output_pkg' keywords.
 
     """
@@ -119,7 +117,7 @@ def handle_arguments():
         print('No input file.')
         more_informations()
 
-    for option, value in optlist[0]:
+    for option, _ in optlist[0]:
         if option in ['-h', '--help']:
             usage()
 
@@ -130,11 +128,9 @@ def handle_arguments():
 
     return result
 
-# END: arguments and init }}}
-
 
 def read_debcontrol(path):
-    """Read some informations since debian/control."""
+    """Read some informations from debian/control."""
     result = {'name': '', 'maintainer': '', 'version': '',
               'description': '', 'size': '', 'architecture': ''}
 
@@ -183,7 +179,7 @@ def read_debcontrol(path):
 def write_archcontrol(path, pkginfo):
     """Write an Arch Linux PKGINFO in 'path'.
 
-    'pkginfo' is a dictionary which contain some informations
+    'pkginfo' is a dictionary that contain some informations
     returned by read_debcontrol().
 
     """
@@ -212,15 +208,10 @@ def write_archcontrol(path, pkginfo):
 def convert(input_pkg, output_pkg=''):
     """Convert a Debian package to an Arch Linux package.
 
-    input_pkg must contain the input package, with
-    *.deb extension.
+    input_pkg contains the input package, with *.deb extension.
 
-    output_pkg will contain the output package, with
-    *.pkg.tar.gz extension. This argument is not
-    obligatory.
-
-    NOTE: Be careful, this function uses os.chdir
-          to change the current directory.
+    output_pkg contains the output package, with *.pkg.tar.gz extension. This
+    argument is not obligatory.
 
     """
     (input_tmpd, output_tmpd) = (mkdtemp(), mkdtemp())
@@ -283,6 +274,7 @@ def convert(input_pkg, output_pkg=''):
     finally:
         rmtree(input_tmpd, True)
         rmtree(output_tmpd, True)
+
 
 if __name__ == '__main__':
     try:
