@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) Asher256.
+# Copyright (c) Asher256 <asher256@gmail.com>
+#
+# Github: https://github.com/Asher256/archalien
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
