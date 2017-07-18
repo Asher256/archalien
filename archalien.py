@@ -155,6 +155,15 @@ def read_debcontrol(path):
             result['name'] = value
         if variable == 'installed-size':
             result['size'] = value
+        if variable == 'version':
+            try:
+                before, after = value.split(':')
+            except ValueError:
+                result[variable] = value
+            else:
+                result[variable] = after
+
+            result[variable] = result[variable].replace('-', '_')
         elif variable in ['maintainer', 'version', 'description']:
             result[variable] = value
         elif variable == 'architecture':
@@ -262,8 +271,9 @@ def convert(input_pkg, output_pkg=''):
         # If the output filename is not specified, it will be created
         if output_pkg == '':
             output_pkg = os.path.join(os.path.dirname(input_pkg),
-                                      '%s-%s-%s''.pkg.tar.gz'
-                                      % (deb_info['name'],deb_info['version'],pkgrel))
+                                      '%s-%s-%s-%s''.pkg.tar.gz'
+                                      % (deb_info['name'], deb_info['version'],
+                                         pkgrel, deb_info['architecture']))
 
         # Creating Arch Linux package
         chdir(output_tmpd)
