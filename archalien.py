@@ -147,7 +147,7 @@ def read_debcontrol(path):
         line = line.rstrip('\n')
         try:
             (variable, value) = [splited.strip().lower()
-                                 for splited in line.split(':')]
+                                 for splited in line.split(':', 1)]
         except ValueError:
             continue
 
