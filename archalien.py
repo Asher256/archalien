@@ -29,6 +29,7 @@ import os
 from shutil import rmtree
 from tempfile import mkdtemp
 from getopt import gnu_getopt, GetoptError
+import shlex
 
 pkgrel=1
 
@@ -244,7 +245,7 @@ def convert(input_pkg, output_pkg=''):
         chdir(input_tmpd)
 
         # Extraction of the deb archive
-        os.system('ar x \'%s\'' % input_pkg)
+        os.system('ar x %s' % shlex.quote(input_pkg))
 
         if os.path.exists('data.tar.gz'):
             data_path = 'data.tar.gz'
@@ -259,11 +260,20 @@ def convert(input_pkg, output_pkg=''):
                 sys.exit(1)
 
         # Extraction of control.tar.gz and data.tar.x
-        os.system('tar xf \'%s\' -C \'%s\'' %
-                  (os.path.join(input_tmpd, data_path),
-                   output_tmpd))
-        os.system('tar xf \'%s\'' %
-                  (os.path.join(input_tmpd, 'control.tar.gz')))
+        os.system('tar xf %s -C %s' %
+                  (shlex.quote(os.path.join(input_tmpd, data_path)),
+                   shlex.quote(output_tmpd)))
+
+        control_file = os.path.join(input_tmpd, 'control.tar.gz')
+        if os.path.isfile(control_file):
+            os.system('tar xf %s' % shlex.quote(control_file))
+        else:
+            control_file = os.path.join(input_tmpd, 'control.tar.xz')
+            if os.path.isfile(control_file):
+                os.system('tar xf %s' % shlex.quote(control_file))
+            else:
+                print("Error: control.tar.* was not found in the deb package.")
+                sys.exit(1)
 
         # Reading 'control' file, from the deb archive
         deb_info = read_debcontrol(os.path.join(input_tmpd, 'control'))
@@ -279,7 +289,7 @@ def convert(input_pkg, output_pkg=''):
         chdir(output_tmpd)
         os.system('find . -type f | sed -e \'s/^\\.\\///\' > .FILELIST')
         write_archcontrol('.PKGINFO', deb_info)
-        os.system('tar zcf \'%s\' * .PKGINFO .FILELIST' % output_pkg)
+        os.system('tar zcf %s * .PKGINFO .FILELIST' % shlex.quote(output_pkg))
 
         print("done.")
         print()
