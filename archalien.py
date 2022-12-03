@@ -180,7 +180,7 @@ def read_debcontrol(path):
     filedesc.close()
 
     for key, value in list(result.items()):
-        if value == '' and key not in ['size']:
+        if value == '' and key not in ['size', 'description']:
             print('The debian package doesn\'t '
                   'contain all needed informations.\n'
                   'The variable \'%s\' is empty.' % key)
