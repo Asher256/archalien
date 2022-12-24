@@ -175,7 +175,7 @@ def read_debcontrol(path):
             elif value == 'i686':
                 result['architecture'] = 'i686'
             else:
-                result['architecture'] = 'all'
+                result['architecture'] = 'any'
 
     filedesc.close()
 
