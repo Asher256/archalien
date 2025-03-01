@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright (c) Asher256 
-#
+# Copyright (c) Asher256
 # Github: https://github.com/Asher256/archalien
 #
+# The archalien command-line utility allows converting Debian .deb packages into
+# Arch Linux .pkg.tar.gz packages.
+#
+# License
+# -------
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
